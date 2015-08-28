@@ -2,19 +2,36 @@ package net.jmlproductions.groovyplants
 
 class HeightGenerator
 {
-    HeightGenerator(VaryingSlope slope) 
+    private initialHeight
+    private slopes
+    
+    HeightGenerator()
     {
+        initialHeight = 0
+        slopes = new Slopes()
     }
     
-    def generate(numberOfHeights)
+    def generate(int numberOfHeights)
     {
-        this
+        List<Height> heights = []
+        
+        def currentHeight = initialHeight
+        
+        numberOfHeights.times{
+            heights << currentHeight
+            currentHeight += slopes.next()
+        }
+        return heights
     }
     
     def startingAtHeight(initialHeight)
     {
-        List<Height> heights = []
-        300.times{heights << initialHeight}
-        return heights;
+        this.initialHeight = initialHeight;
+        this
+    }
+    
+    def usingSlopes(slopes) {
+        this.slopes = slopes
+        this
     }
 }

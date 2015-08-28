@@ -30,8 +30,8 @@ jar
 
     manifest
     {
-            attributes 'Main-Class': 'net.jmlproductions.groovyplants.Plants'
-        }
+        attributes 'Main-Class': 'net.jmlproductions.groovyplants.Plants'
+    }
 }
 
 mainClassName = "net.jmlproductions.groovyplants.Plants"

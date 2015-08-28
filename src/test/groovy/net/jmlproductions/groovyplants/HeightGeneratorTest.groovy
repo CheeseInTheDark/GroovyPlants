@@ -1,36 +1,51 @@
-package net.jmlproductions.groovyplants;
+package net.jmlproductions.groovyplants
 
-import static org.mockito.Mockito.*;
-import static org.hamcrest.Matchers.contains;
-
-import java.awt.image.BufferedImage
-import org.junit.*;
+import static org.mockito.Mockito.*
+import org.junit.*
 
 class HeightGeneratorTest {
     
+    private HeightGenerator underTest = new HeightGenerator();
+    
     @Test
-    def void shouldGenerateAFlatSetOfHeightsAt50() {
-        VaryingSlope slope = {nextSlope: 0} as VaryingSlope;
-        HeightGenerator underTest = new HeightGenerator(slope);
+    def void shouldGenerateAFlatSetOf300HeightsAt50() {
+        List<Height> heights = underTest.startingAtHeight(50).generate(300)
         
-        List<Height> heights = underTest.generate(300).startingAtHeight(50);
+        List<Height> expectedHeights = []
+         300.times{ expectedHeights += 50 }
         
-        List<Height> expected = []
-         300.times{ expected += 50 };
-        
-        assert heights.containsAll(expected);
+        assert heights.equals(expectedHeights)
     }
     
     @Test
-    def void shouldGenerateAFlatSetOfHeightsAt70() {
-        VaryingSlope slope = {nextSlope: 0} as VaryingSlope;
-        HeightGenerator underTest = new HeightGenerator(slope);
-        
-        List<Height> heights = underTest.generate(300).startingAtHeight(70);
+    def void shouldGenerateAFlatSetOf300HeightsAt70() {
+        List<Height> heights = underTest.startingAtHeight(70).generate(300)
         
         List<Height> expected = []
-         300.times{expected += 70};
-         
-         assert heights.containsAll(expected);
+         300.times{expected += 70}
+         assert heights.equals(expected)
+    }
+    
+    @Test
+    def void shouldGenerateASetOfTwoHeights() {
+        List<Height> heights = underTest.startingAtHeight(50).generate(2)
+        
+        assert heights.equals([50, 50])
+    }
+    
+    @Test
+    def void shouldGenerateTwoHeightsWithTheSecondHigherByOne() {
+        Slopes slope = [next: {1}] as Slopes
+        
+        List<Height> heights = underTest.usingSlopes(slope).startingAtHeight(50).generate(2)
+        
+        assert heights.equals([50, 51])
+    }
+    
+    @Test
+    def void shouldGenerateTenHeightsAt0() {
+        List<Height> heights = underTest.generate(10)
+        
+        assert heights.equals([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     }
 }
