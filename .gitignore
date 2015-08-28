@@ -3,3 +3,6 @@ bin/
 .settings
 .classpath
 .project
+.idea/
+GroovyPlants.iml
+build/
