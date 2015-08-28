@@ -14,7 +14,7 @@ class HeightGenerator
     def startingAtHeight(initialHeight)
     {
         List<Height> heights = []
-        300.times{heights << 50}
+        300.times{heights << initialHeight}
         return heights;
     }
 }
