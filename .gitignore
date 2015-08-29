@@ -4,5 +4,7 @@ bin/
 .classpath
 .project
 .idea/
-GroovyPlants.iml
+*.iml
 build/
+*.ipr
+*.iws
