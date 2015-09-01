@@ -1,6 +1,6 @@
 package net.jmlproductions.groovyplants
 
-class Slopes
+class Deltas
 {
     def next() {
         return 0;
