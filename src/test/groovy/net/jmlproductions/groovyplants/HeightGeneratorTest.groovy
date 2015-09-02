@@ -71,6 +71,14 @@ class HeightGeneratorTest {
     }
 
     @Test
+    def void shouldIncreaseSlopeWhenGoingBelowLowerBounds()
+    {
+        List<Height> heights = heightGenerator.startingWithSlope(-1).startingAtHeight(1).adjustingSlopeBy(1).whenBelow(1).generate(5);
+
+        assert heights.equals([1, 0, 0, 1, 2])
+    }
+
+    @Test
     def void shouldGenerateThreeHeightsAtZero() {
         List<Height> heights = heightGenerator.generate(3)
 
