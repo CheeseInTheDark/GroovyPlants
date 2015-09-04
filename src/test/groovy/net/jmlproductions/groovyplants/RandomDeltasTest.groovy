@@ -14,12 +14,12 @@ class RandomDeltasTest
         Random.metaClass.nextDouble = { iterator.next() }
     }
 
-	@After
-	def void teardown()
-	{
-		Random.metaClass.nextDouble = { originalNextDouble.invoke(delegate) }
-	}
-	
+    @After
+    def void teardown()
+    {
+        Random.metaClass.nextDouble = { originalNextDouble.invoke(delegate) }
+    }
+
     @Test
     def void returnsRandomDeltasBetweenNegativeOneAndOne()
     {
