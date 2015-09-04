@@ -3,18 +3,18 @@ package net.jmlproductions.groovyplants
 class RandomDeltas extends Deltas
 {
     def range
-    def centeringValue
+    def lowerBound
     def Random random
 
     RandomDeltas(lowerBound, upperBound)
     {
         this.random = new Random()
         this.range = upperBound - lowerBound
-        this.centeringValue = range/2
+        this.lowerBound = -lowerBound
     }
 
     def next()
     {
-        random.nextDouble() * range - centeringValue
+        random.nextDouble() * range - lowerBound
     }
 }

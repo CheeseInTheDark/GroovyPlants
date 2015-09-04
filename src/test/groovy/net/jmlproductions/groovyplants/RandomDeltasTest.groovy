@@ -4,13 +4,22 @@ import org.junit.*
 
 class RandomDeltasTest
 {
+	def originalNextDouble
+		
     @Before
     def void setup()
     {
+		originalNextDouble = Random.metaClass.getMetaMethod("nextDouble", [] as Class[])
         def iterator = [0.0, 0.75, 0.5].listIterator()
         Random.metaClass.nextDouble = { iterator.next() }
     }
 
+	@After
+	def void teardown()
+	{
+		Random.metaClass.nextDouble = { originalNextDouble.invoke(delegate) }
+	}
+	
     @Test
     def void returnsRandomDeltasBetweenNegativeOneAndOne()
     {
