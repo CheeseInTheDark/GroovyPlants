@@ -18,7 +18,7 @@ class HeightGenerator
         lowerBoundSlopeCorrection = 0.0
         lowerBoundHeight = 0.0
         slope = 0.0
-        deltas = [next: { 0.0 }] as Deltas
+        deltas = new Deltas()
     }
     
     def generate(int numberOfHeights)
