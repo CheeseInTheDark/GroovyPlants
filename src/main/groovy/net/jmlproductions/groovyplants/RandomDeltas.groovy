@@ -10,11 +10,11 @@ class RandomDeltas extends Deltas
     {
         this.random = new Random()
         this.range = upperBound - lowerBound
-        this.lowerBound = -lowerBound
+        this.lowerBound = lowerBound
     }
 
     def next()
     {
-        random.nextDouble() * range - lowerBound
+        random.nextDouble() * range + lowerBound
     }
 }
