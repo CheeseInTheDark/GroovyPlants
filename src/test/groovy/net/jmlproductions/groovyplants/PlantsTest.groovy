@@ -131,7 +131,7 @@ class PlantsTest
     }
 
     @Test
-    def void itDoesNotCreateWaterInTheAir()
+    def void itDropsRandomlyGeneratedWaterToGroundLevel()
     {
         givenRandomIntsFromDoubles(randomValuesForFallingWaterCoordinates)
         {
@@ -143,7 +143,7 @@ class PlantsTest
             assert underTest.terrain == dirtWithWaterFallenOnGround
         }
     }
-    
+
     def plantsWithInitialTerrain(initialTerrain)
     {
         new Plants([generate: {initialTerrain}], new Random())

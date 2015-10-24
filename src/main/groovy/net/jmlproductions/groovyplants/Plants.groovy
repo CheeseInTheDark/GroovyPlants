@@ -15,39 +15,42 @@ class Plants
 
     def createSeedAt(x, y)
     {
-        if (terrainUnder(x, y).is(Sky))
-        {
-            y = terrain[x].findIndexOf(y) {it != Sky} - 1
-        }
-
-        terrain[x][y] = Seed
+        terrain[x][heightOfFirstNonSkyUnder(x, y)] = Seed
     }
 
-    def createWaterAt(x, y)
+    def createWaterAt(originX, originY)
     {
         12.times
         {
-            def candidateX = x + random.nextInt(5)
-            def candidateY = y + random.nextInt(5)
+            def x = originX + random.nextInt(5)
+            def y = originY + random.nextInt(5)
 
-            if(terrain[candidateX][candidateY].is(Dirt))
+            if(terrain[x][y].is(Dirt))
             {
-                terrain[candidateX][candidateY] = GroundWater
+                terrain[x][y] = GroundWater
             }
             else
             {
-                if (terrainUnder(candidateX, candidateY).is(Sky))
-                {
-                    candidateY = terrain[candidateX].findIndexOf(candidateY) {it != Sky} - 1
-                }
-
-                terrain[candidateX][candidateY] = Water
+                y = heightOfFirstNonSkyUnder(x, y)
+                terrain[x][y] = Water
             }
         }
     }
 
-    def private terrainUnder(x, y)
+    def private heightOfFirstNonSkyUnder(x, y)
+    {
+        if (pointUnder(x, y).is(Sky)) { firstPointBelow(x, y) { it != Sky } }
+        else { y }
+    }
+
+    def private pointUnder(x, y)
     {
         terrain[x][y+1]
     }
+
+    def private firstPointBelow(x, y, condition)
+    {
+        terrain[x].findIndexOf(y, condition) - 1
+    }
+
 }
