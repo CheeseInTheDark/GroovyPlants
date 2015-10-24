@@ -1,40 +1,37 @@
 package net.jmlproductions.groovyplants
 
 import org.junit.*
+import static RandomMocker.*
 
 class RandomDeltasTest
 {
-	def originalNextDouble
-		
-    @Before
-    def void setup()
-    {
-		originalNextDouble = Random.metaClass.getMetaMethod("nextDouble", [] as Class[])
-        def iterator = [0.0, 0.75, 0.5].listIterator()
-        Random.metaClass.nextDouble = { iterator.next() }
-    }
-
-    @After
-    def void teardown()
-    {
-        Random.metaClass.nextDouble = { originalNextDouble.invoke(delegate) }
-    }
-
     @Test
     def void returnsRandomDeltasBetweenNegativeOneAndOne()
     {
-        def deltas = []
-        3.times { deltas << (new RandomDeltas(-1, 1) as Deltas).next() }
-
-        assert deltas == [-1, 0.5, 0]
+        givenRandomDoubles([0.0, 0.75, 0.5])
+        {
+            random -> givenTestSubjectWithBounds(-1, 1, random)
+            {
+                underTest -> for (expectedValue in [-1, 0.5, 0]) { assert underTest.next() == expectedValue }
+            }
+        }
     }
 
     @Test
     def void returnsRandomDeltasBetweenZeroAndOne()
     {
-        def deltas = []
-        3.times { deltas << (new RandomDeltas(0, 1) as Deltas).next() }
-
-        assert deltas == [0, 0.75, 0.5]
+        givenRandomDoubles([0.0, 0.75, 0.5])
+        {
+            random -> givenTestSubjectWithBounds(0, 1, random)
+            {
+                underTest -> for(expectedValue in [0, 0.75, 0.5]) { assert underTest.next() == expectedValue }
+            }
+        }
     }
+
+    def givenTestSubjectWithBounds(min, max, random, Closure test)
+    {
+        test(new RandomDeltas(min, max, random))
+    }
+
 }

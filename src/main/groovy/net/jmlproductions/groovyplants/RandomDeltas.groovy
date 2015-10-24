@@ -4,11 +4,11 @@ class RandomDeltas extends Deltas
 {
     def range
     def lowerBound
-    def Random random
+    def random
 
-    RandomDeltas(lowerBound, upperBound)
+    RandomDeltas(lowerBound, upperBound, random)
     {
-        this.random = new Random()
+        this.random = random
         this.range = upperBound - lowerBound
         this.lowerBound = lowerBound
     }
