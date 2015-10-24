@@ -27,7 +27,22 @@ class Plants
     {
         12.times
         {
-            terrain[x + random.nextInt(5)][y + random.nextInt(5)] = GroundWater
+            def candidateX = x + random.nextInt(5)
+            def candidateY = y + random.nextInt(5)
+
+            if(terrain[candidateX][candidateY].is(Dirt))
+            {
+                terrain[candidateX][candidateY] = GroundWater
+            }
+            else
+            {
+                if (terrainUnder(candidateX, candidateY).is(Sky))
+                {
+                    candidateY = terrain[candidateX].findIndexOf(candidateY) {it != Sky} - 1
+                }
+
+                terrain[candidateX][candidateY] = Water
+            }
         }
     }
 

@@ -46,16 +46,6 @@ class PlantsTest
                                                                      ["D", "D", "D", "D", "D", "D", "D", "D"],
                                                                      ["D", "D", "D", "D", "D", "D", "D", "D"]])
 
-    def dirtWithWaterFallenOnGround = terrainFromStringMatrix([["S", "S", "S", "S", "S", "S", "S", "S"],
-                                                               ["S", "S", "S", "S", "S", "S", "S", "S"],
-                                                               ["S", "S", "S", "S", "S", "S", "S", "S"],
-                                                               ["S", "S", "W", "S", "S", "S", "S", "S"],
-                                                               ["S", "S", "W", "S", "S", "S", "S", "S"],
-                                                               ["S", "S", "W", "W", "S", "S", "S", "S"],
-                                                               ["S", "W", "W", "W", "S", "S", "S", "S"],
-                                                               ["S", "W", "W", "W", "W", "W", "S", "S"],
-                                                               ["D", "D", "D", "D", "D", "D", "D", "D"]])
-    
     def randomValuesForGroundWaterCoordinates = [0.00, 0.00,
                                                  0.25, 0.00,
                                                  0.50, 0.00,
@@ -68,6 +58,39 @@ class PlantsTest
                                                  0.25, 1.00,
                                                  0.50, 1.00,
                                                  1.00, 1.00]
+
+    def oneRowOfDirtAtBottom = terrainFromStringMatrix([["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                        ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                        ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                        ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                        ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                        ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                        ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                        ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                        ["D", "D", "D", "D", "D", "D", "D", "D"]])
+    
+    def dirtWithWaterFallenOnGround = terrainFromStringMatrix([["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                               ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                               ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                               ["S", "S", "W", "S", "S", "S", "S", "S"],
+                                                               ["S", "S", "W", "S", "S", "S", "S", "S"],
+                                                               ["S", "S", "W", "W", "S", "S", "S", "S"],
+                                                               ["S", "W", "W", "W", "S", "S", "S", "S"],
+                                                               ["S", "W", "W", "W", "W", "W", "S", "S"],
+                                                               ["D", "D", "D", "D", "D", "D", "D", "D"]])
+    
+    def randomValuesForFallingWaterCoordinates = [0.00, 0.00,
+                                                  0.25, 0.00,
+                                                  0.75, 0.00,
+                                                  0.50, 0.00,
+                                                  1.00, 0.00,
+                                                  0.00, 0.00,
+                                                  0.25, 0.00,
+                                                  0.25, 0.00,
+                                                  0.50, 0.00,
+                                                  0.25, 0.00,
+                                                  0.50, 0.00,
+                                                  0.25, 0.00]
 
     def Plants underTest = plantsWithInitialTerrain(skyAndFlatDirt)
 
@@ -110,7 +133,15 @@ class PlantsTest
     @Test
     def void itDoesNotCreateWaterInTheAir()
     {
-        
+        givenRandomIntsFromDoubles(randomValuesForFallingWaterCoordinates)
+        {
+            random ->
+            def underTest = new Plants([generate: {oneRowOfDirtAtBottom}], random)
+
+            underTest.createWaterAt(1, 0)
+
+            assert underTest.terrain == dirtWithWaterFallenOnGround
+        }
     }
     
     def plantsWithInitialTerrain(initialTerrain)
