@@ -39,10 +39,10 @@ class Plants
 
     def update(x, y)
     {
-        terrain[2][0] = Plant
-        terrain[2][1] = Plant
-        terrain[2][2] = Root
-        terrain[2][3] = Root
+        terrain[x][y-1] = Plant
+        terrain[x][y] = Plant
+        terrain[x][y+1] = Root
+        terrain[x][y+2] = Root
     }
 
     def private heightOfFirstNonSkyUnder(x, y)

@@ -136,6 +136,25 @@ class PlantsTest
                                                      ["D", "D", "R", "D"],
                                                      ["D", "D", "R", "D"]])
 
+    def anotherSeedAtGroundLevelWithNeighboringWater = terrainFromStringMatrix([["S", "S", "S", "S"],
+                                                                                ["S", "S", "S", "S"],
+                                                                                ["W", "E", "S", "S"],
+                                                                                ["D", "D", "D", "D"],
+                                                                                ["D", "D", "D", "D"]])
+
+    def terrainWithAnotherSprout = terrainFromStringMatrix([["S", "S", "S", "S"],
+                                                            ["S", "P", "S", "S"],
+                                                            ["W", "P", "S", "S"],
+                                                            ["D", "R", "D", "D"],
+                                                            ["D", "R", "D", "D"]])
+
+    def aSeedWithNoWaterNextToIt = terrainFromStringMatrix([["S", "S", "S", "S"],
+                                                            ["S", "S", "E", "S"],
+                                                            ["D", "D", "D", "D"],
+                                                            ["D", "D", "D", "D"]])
+
+    def randomValueWhichWontRemoveSeed = [0.02]
+
     def Plants underTest = plantsWithInitialTerrain(skyAndFlatDirt)
 
     @Test
@@ -200,6 +219,26 @@ class PlantsTest
         }
     }
 
+    @Test
+    def void itTurnsASeedInADifferentLocationWithOneWaterNextToItIntoASprout()
+    {
+        testingPlantsWith(anotherSeedAtGroundLevelWithNeighboringWater)
+        {
+            it.update(1, 2)
+            assert it.terrain == terrainWithAnotherSprout
+        }
+    }
+
+    @Test
+    def void itDoesNothingToASeedWithNoWaterNextToIt()
+    {
+        testingPlantsWith(aSeedWithNoWaterNextToIt, randomValueWhichWontRemoveSeed)
+        {
+            it.update(2, 1)
+            assert it.terrain == aSeedWithNoWaterNextToIt
+        }
+    }
+    
     def void testingPlantsWith(terrain, randomValues = [0.0], test)
     {
         givenRandomIntsFromDoubles(randomValues)
