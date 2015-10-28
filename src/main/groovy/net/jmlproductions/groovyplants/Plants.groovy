@@ -29,7 +29,7 @@ class Plants
             {
                 terrain[x][y] = GroundWater
             }
-            else
+            else if (terrain[x][y].is(Sky))
             {
                 y = heightOfFirstNonSkyUnder(x, y)
                 terrain[x][y] = Water

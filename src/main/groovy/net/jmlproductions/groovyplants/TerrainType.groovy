@@ -9,5 +9,9 @@ enum TerrainType
     Sky,
     Seed,
     Water,
+    Root,
+    Plant,
+    Fruit,
+    DeadPlant,
     GroundWater
 }

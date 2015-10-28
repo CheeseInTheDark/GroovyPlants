@@ -6,7 +6,8 @@ import static net.jmlproductions.groovyplants.RandomMocker.*
 
 class PlantsTest
 {
-    def stringsToTerrainTypes = ["D": Dirt, "W": Water, "E": Seed, "S": Sky, "G": GroundWater]
+    def stringsToTerrainTypes = ["D": Dirt, "W": Water, "E": Seed, "S": Sky, "X": DeadPlant,
+                                 "G": GroundWater, "R": Root, "P": Plant, "F": Fruit]
 
     def skyAndFlatDirt = terrainFromStringMatrix([["S", "S", "S", "S", "S", "S", "S", "S", "S"],
                                                   ["S", "S", "S", "S", "S", "S", "S", "S", "S"],
@@ -92,6 +93,39 @@ class PlantsTest
                                                   0.50, 0.00,
                                                   0.25, 0.00]
 
+    def terrainWithNonDirtNonSky = terrainFromStringMatrix([["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                            ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                            ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                            ["D", "D", "D", "P", "F", "D", "D", "D"],
+                                                            ["D", "D", "D", "E", "X", "D", "D", "D"],
+                                                            ["D", "D", "D", "R", "D", "D", "D", "D"],
+                                                            ["D", "D", "D", "D", "D", "D", "D", "D"],
+                                                            ["D", "D", "D", "D", "D", "D", "D", "D"],
+                                                            ["D", "D", "D", "D", "D", "D", "D", "D"]])
+
+    def terrainWithNoNonSkyNonDirtReplaced = terrainFromStringMatrix([["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                                      ["S", "S", "S", "S", "S", "S", "S", "S"],
+                                                                      ["S", "S", "S", "W", "S", "S", "S", "S"],
+                                                                      ["D", "D", "D", "P", "F", "D", "D", "D"],
+                                                                      ["D", "D", "D", "E", "X", "D", "D", "D"],
+                                                                      ["D", "D", "D", "R", "D", "D", "D", "D"],
+                                                                      ["D", "D", "D", "D", "D", "D", "D", "D"],
+                                                                      ["D", "D", "D", "D", "D", "D", "D", "D"],
+                                                                      ["D", "D", "D", "D", "D", "D", "D", "D"]])
+
+    def randomValuesForCoordinatesWhichShouldNotBeReplacedWithWater = [0.00, 0.00,
+                                                                       0.00, 0.00,
+                                                                       0.00, 0.00,
+                                                                       0.00, 0.00,
+                                                                       0.00, 0.25,
+                                                                       0.00, 0.50,
+                                                                       0.00, 0.75,
+                                                                       0.25, 0.25,
+                                                                       0.25, 0.50,
+                                                                       0.00, 0.00,
+                                                                       0.00, 0.00,
+                                                                       0.00, 0.00]
+
     def Plants underTest = plantsWithInitialTerrain(skyAndFlatDirt)
 
     @Test
@@ -141,6 +175,20 @@ class PlantsTest
             underTest.createWaterAt(1, 0)
 
             assert underTest.terrain == dirtWithWaterFallenOnGround
+        }
+    }
+
+    @Test
+    def void itOnlyReplacesDirtAndSkyWithWater()
+    {
+        givenRandomIntsFromDoubles(randomValuesForCoordinatesWhichShouldNotBeReplacedWithWater)
+        {
+            random ->
+            def underTest = new Plants([generate: {terrainWithNonDirtNonSky}], random)
+
+                underTest.createWaterAt(3, 2)
+
+                assert underTest.terrain == terrainWithNoNonSkyNonDirtReplaced
         }
     }
 
