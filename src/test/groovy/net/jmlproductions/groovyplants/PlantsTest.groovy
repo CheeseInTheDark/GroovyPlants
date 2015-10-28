@@ -113,23 +113,33 @@ class PlantsTest
                                                                       ["D", "D", "D", "D", "D", "D", "D", "D"],
                                                                       ["D", "D", "D", "D", "D", "D", "D", "D"]])
 
-    def randomValuesForCoordinatesWhichShouldNotBeReplacedWithWater = [0.00, 0.00,
-                                                                       0.00, 0.00,
-                                                                       0.00, 0.00,
-                                                                       0.00, 0.00,
-                                                                       0.00, 0.25,
-                                                                       0.00, 0.50,
-                                                                       0.00, 0.75,
-                                                                       0.25, 0.25,
-                                                                       0.25, 0.50,
-                                                                       0.00, 0.00,
-                                                                       0.00, 0.00,
-                                                                       0.00, 0.00]
+    def randomValuesForNonSkyNonDirtCoordinates = [0.00, 0.00,
+                                                   0.00, 0.00,
+                                                   0.00, 0.00,
+                                                   0.00, 0.00,
+                                                   0.00, 0.25,
+                                                   0.00, 0.50,
+                                                   0.00, 0.75,
+                                                   0.25, 0.25,
+                                                   0.25, 0.50,
+                                                   0.00, 0.00,
+                                                   0.00, 0.00,
+                                                   0.00, 0.00]
+
+    def seedAtGroundLevelWithNeighboringWater = terrainFromStringMatrix([["S", "S", "S", "S"],
+                                                                         ["S", "W", "E", "S"],
+                                                                         ["D", "D", "D", "D"],
+                                                                         ["D", "D", "D", "D"]])
+
+    def terrainWithSprout = terrainFromStringMatrix([["S", "S", "P", "S"],
+                                                     ["S", "W", "P", "S"],
+                                                     ["D", "D", "R", "D"],
+                                                     ["D", "D", "R", "D"]])
 
     def Plants underTest = plantsWithInitialTerrain(skyAndFlatDirt)
 
     @Test
-    def void itReturnsTheTerrainItStartsWith()
+    def void itHasTheSameTerrainAsWhatItStartsWith()
     {
         assert underTest.terrain.is(skyAndFlatDirt)
     }
@@ -153,42 +163,50 @@ class PlantsTest
     @Test
     def void itCreatesTwelveRandomSpotsOfWaterInAFiveByFiveArea()
     {
-        givenRandomIntsFromDoubles(randomValuesForGroundWaterCoordinates)
+        testingPlantsWith(allDirt, randomValuesForGroundWaterCoordinates)
         {
-            random ->
-            def underTest = new Plants([generate: {allDirt}], random)
-
-            underTest.createWaterAt(1, 1)
-
-            assert underTest.terrain == dirtWithRandomlyPlacedGroundWater
+            it.createWaterAt(1, 1)
+            assert it.terrain == dirtWithRandomlyPlacedGroundWater
         }
     }
 
     @Test
     def void itDropsRandomlyGeneratedWaterToGroundLevel()
     {
-        givenRandomIntsFromDoubles(randomValuesForFallingWaterCoordinates)
+        testingPlantsWith(oneRowOfDirtAtBottom, randomValuesForFallingWaterCoordinates)
         {
-            random ->
-            def underTest = new Plants([generate: {oneRowOfDirtAtBottom}], random)
-
-            underTest.createWaterAt(1, 0)
-
-            assert underTest.terrain == dirtWithWaterFallenOnGround
+            it.createWaterAt(1, 0)
+            assert it.terrain == dirtWithWaterFallenOnGround
         }
     }
 
     @Test
     def void itOnlyReplacesDirtAndSkyWithWater()
     {
-        givenRandomIntsFromDoubles(randomValuesForCoordinatesWhichShouldNotBeReplacedWithWater)
+        testingPlantsWith(terrainWithNonDirtNonSky, randomValuesForNonSkyNonDirtCoordinates)
+        {
+            it.createWaterAt(3, 2)
+            assert it.terrain == terrainWithNoNonSkyNonDirtReplaced
+        }
+    }
+
+    @Test
+    def void itTurnsASeedWithOneWaterNextToItIntoASprout()
+    {
+        testingPlantsWith(seedAtGroundLevelWithNeighboringWater)
+        {
+            it.update(2, 1)
+            assert it.terrain == terrainWithSprout
+        }
+    }
+
+    def void testingPlantsWith(terrain, randomValues = [0.0], test)
+    {
+        givenRandomIntsFromDoubles(randomValues)
         {
             random ->
-            def underTest = new Plants([generate: {terrainWithNonDirtNonSky}], random)
-
-                underTest.createWaterAt(3, 2)
-
-                assert underTest.terrain == terrainWithNoNonSkyNonDirtReplaced
+            def underTest = new Plants([generate: { terrain }], random)
+            test(underTest)
         }
     }
 

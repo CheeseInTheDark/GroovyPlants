@@ -37,6 +37,14 @@ class Plants
         }
     }
 
+    def update(x, y)
+    {
+        terrain[2][0] = Plant
+        terrain[2][1] = Plant
+        terrain[2][2] = Root
+        terrain[2][3] = Root
+    }
+
     def private heightOfFirstNonSkyUnder(x, y)
     {
         if (pointUnder(x, y).is(Sky)) { firstPointBelow(x, y) { it != Sky } }
