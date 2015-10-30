@@ -126,7 +126,7 @@ class PlantsTest
                                                    0.00, 0.00,
                                                    0.00, 0.00]
 
-    def seedAtGroundLevelWithNeighboringWater = terrainFromStringMatrix([["S", "S", "S", "S"],
+    def seedAtGroundLevelWithWaterOnLeft = terrainFromStringMatrix([["S", "S", "S", "S"],
                                                                          ["S", "W", "E", "S"],
                                                                          ["D", "D", "D", "D"],
                                                                          ["D", "D", "D", "D"]])
@@ -136,7 +136,7 @@ class PlantsTest
                                                      ["D", "D", "R", "D"],
                                                      ["D", "D", "R", "D"]])
 
-    def anotherSeedAtGroundLevelWithNeighboringWater = terrainFromStringMatrix([["S", "S", "S", "S"],
+    def anotherSeedAtGroundLevelWithWaterOnLeft = terrainFromStringMatrix([["S", "S", "S", "S"],
                                                                                 ["S", "S", "S", "S"],
                                                                                 ["W", "E", "S", "S"],
                                                                                 ["D", "D", "D", "D"],
@@ -153,14 +153,77 @@ class PlantsTest
                                                             ["D", "D", "D", "D"],
                                                             ["D", "D", "D", "D"]])
 
-    def randomValueWhichWontRemoveSeed = [0.02]
+    def randomValueWhichWontRemoveSeed = [0.01]
+
+    def randomValueWhichWillRemoveSeed = [0.00]
+
+    def seedWithWaterOnRight = terrainFromStringMatrix([["S", "S", "S", "S"],
+                                                        ["E", "W", "S", "S"],
+                                                        ["D", "D", "D", "D"],
+                                                        ["D", "D", "D", "D"]])
+
+    def sproutFromWaterOnRight = terrainFromStringMatrix([["P", "S", "S", "S"],
+                                                          ["P", "W", "S", "S"],
+                                                          ["R", "D", "D", "D"],
+                                                          ["R", "D", "D", "D"]])
+
+    def seedWithWaterBelow = terrainFromStringMatrix([["S", "S", "S", "S"],
+                                                      ["S", "E", "S", "S"],
+                                                      ["D", "W", "D", "D"],
+                                                      ["D", "D", "D", "D"]])
+
+
+    def seedWithWaterAbove = terrainFromStringMatrix([["S", "W", "S", "S"],
+                                                      ["S", "E", "S", "S"],
+                                                      ["D", "S", "D", "D"],
+                                                      ["D", "D", "D", "D"]])
+
+    def sproutWhichOverwritesWater = terrainFromStringMatrix([["S", "P", "S", "S"],
+                                                              ["S", "P", "S", "S"],
+                                                              ["D", "R", "D", "D"],
+                                                              ["D", "R", "D", "D"]])
+
+    def seedWithGroundWaterAbove = terrainFromStringMatrix([["D", "G", "D", "D"],
+                                                            ["D", "E", "D", "D"],
+                                                            ["D", "D", "D", "D"],
+                                                            ["D", "D", "D", "D"]])
+
+    def undergroundSproutWhichOverwritesWater = terrainFromStringMatrix([["D", "P", "D", "D"],
+                                                                         ["D", "P", "D", "D"],
+                                                                         ["D", "R", "D", "D"],
+                                                                         ["D", "R", "D", "D"]])
+
+    def seedWithGroundWaterOnRight = terrainFromStringMatrix([["D", "D", "D", "D"],
+                                                              ["D", "D", "E", "G"],
+                                                              ["D", "D", "D", "D"],
+                                                              ["D", "D", "D", "D"]])
+
+    def undergroundSproutWithGroundWaterOnRight = terrainFromStringMatrix([["D", "D", "P", "D"],
+                                                                           ["D", "D", "P", "G"],
+                                                                           ["D", "D", "R", "D"],
+                                                                           ["D", "D", "R", "D"]])
+
+    def seedWithGroundWaterOnLeft = terrainFromStringMatrix([["D", "D", "D", "D"],
+                                                             ["D", "G", "E", "D"],
+                                                             ["D", "D", "D", "D"],
+                                                             ["D", "D", "D", "D"]])
+
+    def undergroundSproutWithGroundWaterOnLeft = terrainFromStringMatrix([["D", "D", "P", "D"],
+                                                                          ["D", "G", "P", "D"],
+                                                                          ["D", "D", "R", "D"],
+                                                                          ["D", "D", "R", "D"]])
+
+    def seedReplacedByDirt = terrainFromStringMatrix([["S", "S", "S", "S"],
+                                                      ["S", "S", "D", "S"],
+                                                      ["D", "D", "D", "D"],
+                                                      ["D", "D", "D", "D"]])
 
     def Plants underTest = plantsWithInitialTerrain(skyAndFlatDirt)
 
     @Test
     def void itHasTheSameTerrainAsWhatItStartsWith()
     {
-        assert underTest.terrain.is(skyAndFlatDirt)
+        assert underTest.terrain == skyAndFlatDirt
     }
 
     @Test
@@ -182,7 +245,7 @@ class PlantsTest
     @Test
     def void itCreatesTwelveRandomSpotsOfWaterInAFiveByFiveArea()
     {
-        testingPlantsWith(allDirt, randomValuesForGroundWaterCoordinates)
+        testingPlantsGiven(allDirt, randomValuesForGroundWaterCoordinates)
         {
             it.createWaterAt(1, 1)
             assert it.terrain == dirtWithRandomlyPlacedGroundWater
@@ -192,7 +255,7 @@ class PlantsTest
     @Test
     def void itDropsRandomlyGeneratedWaterToGroundLevel()
     {
-        testingPlantsWith(oneRowOfDirtAtBottom, randomValuesForFallingWaterCoordinates)
+        testingPlantsGiven(oneRowOfDirtAtBottom, randomValuesForFallingWaterCoordinates)
         {
             it.createWaterAt(1, 0)
             assert it.terrain == dirtWithWaterFallenOnGround
@@ -202,7 +265,7 @@ class PlantsTest
     @Test
     def void itOnlyReplacesDirtAndSkyWithWater()
     {
-        testingPlantsWith(terrainWithNonDirtNonSky, randomValuesForNonSkyNonDirtCoordinates)
+        testingPlantsGiven(terrainWithNonDirtNonSky, randomValuesForNonSkyNonDirtCoordinates)
         {
             it.createWaterAt(3, 2)
             assert it.terrain == terrainWithNoNonSkyNonDirtReplaced
@@ -212,7 +275,7 @@ class PlantsTest
     @Test
     def void itTurnsASeedWithOneWaterNextToItIntoASprout()
     {
-        testingPlantsWith(seedAtGroundLevelWithNeighboringWater)
+        testingPlantsGiven(seedAtGroundLevelWithWaterOnLeft)
         {
             it.update(2, 1)
             assert it.terrain == terrainWithSprout
@@ -222,7 +285,7 @@ class PlantsTest
     @Test
     def void itTurnsASeedInADifferentLocationWithOneWaterNextToItIntoASprout()
     {
-        testingPlantsWith(anotherSeedAtGroundLevelWithNeighboringWater)
+        testingPlantsGiven(anotherSeedAtGroundLevelWithWaterOnLeft)
         {
             it.update(1, 2)
             assert it.terrain == terrainWithAnotherSprout
@@ -230,28 +293,98 @@ class PlantsTest
     }
 
     @Test
-    def void itDoesNothingToASeedWithNoWaterNextToIt()
+    def void itDoesNothingToASeedWithNoWaterNextToItNinetyNineHundredthsOfTheTime()
     {
-        testingPlantsWith(aSeedWithNoWaterNextToIt, randomValueWhichWontRemoveSeed)
+        testingPlantsGiven(aSeedWithNoWaterNextToIt, randomValueWhichWontRemoveSeed)
         {
             it.update(2, 1)
             assert it.terrain == aSeedWithNoWaterNextToIt
         }
     }
-    
-    def void testingPlantsWith(terrain, randomValues = [0.0], test)
+
+    @Test
+    def void itTurnsASeedIntoASproutWhenWaterIsToTheRightOfTheSeed()
+    {
+        testingPlantsGiven(seedWithWaterOnRight, randomValueWhichWontRemoveSeed)
+        {
+            it.update(0, 1)
+            assert it.terrain == sproutFromWaterOnRight
+        }
+    }
+
+    @Test
+    def void itTurnsASeedIntoASproutWhenWaterIsBelowTheSeed()
+    {
+        testingPlantsGiven(seedWithWaterBelow, randomValueWhichWontRemoveSeed)
+        {
+            it.update(1, 1)
+            assert it.terrain == sproutWhichOverwritesWater
+        }
+    }
+
+    @Test
+    def void itTurnsASeedIntoASproutWhenWaterIsAboveTheSeed()
+    {
+        testingPlantsGiven(seedWithWaterAbove, randomValueWhichWontRemoveSeed)
+        {
+            it.update(1, 1)
+            assert it.terrain == sproutWhichOverwritesWater
+        }
+    }
+
+    @Test
+    def void itTurnsASeedIntoASproutWhenGroundWaterIsAboveTheSeed()
+    {
+        testingPlantsGiven(seedWithGroundWaterAbove, randomValueWhichWontRemoveSeed)
+        {
+            it.update(1, 1)
+            assert it.terrain == undergroundSproutWhichOverwritesWater
+        }
+    }
+
+    @Test
+    def void itTurnsASeedIntoASproutWhenGroundWaterIsToTheRightOfTheSeed()
+    {
+        testingPlantsGiven(seedWithGroundWaterOnRight, randomValueWhichWontRemoveSeed)
+        {
+            it.update(2, 1)
+            assert it.terrain == undergroundSproutWithGroundWaterOnRight
+        }
+    }
+
+    @Test
+    def void itTurnsASeedIntoASproutWhenGroundWaterIsToTheLeftOfTheSeed()
+    {
+        testingPlantsGiven(seedWithGroundWaterOnLeft, randomValueWhichWontRemoveSeed)
+        {
+            it.update(2, 1)
+            assert it.terrain == undergroundSproutWithGroundWaterOnLeft
+        }
+    }
+
+    @Test
+    def void itTurnsASeedIntoDirtWhenThereIsNoWaterAroundTheSeedOneHundredthOfTheTime()
+    {
+        testingPlantsGiven(aSeedWithNoWaterNextToIt, randomValueWhichWillRemoveSeed)
+        {
+            it.update(2, 1)
+            assert it.terrain == seedReplacedByDirt
+        }
+    }
+
+    def void testingPlantsGiven(terrain, randomValues = [0.0], test)
     {
         givenRandomIntsFromDoubles(randomValues)
         {
             random ->
-            def underTest = new Plants([generate: { terrain }], random)
+            def underTest = new Plants([generate: { terrain.collectNested{ it } }], random)
             test(underTest)
         }
     }
 
     def plantsWithInitialTerrain(initialTerrain)
     {
-        new Plants([generate: {initialTerrain}], new Random())
+        new Plants([generate: { initialTerrain.collectNested{ it } }], new Random())
     }
 
     def terrainFromStringMatrix(terrainStrings)
