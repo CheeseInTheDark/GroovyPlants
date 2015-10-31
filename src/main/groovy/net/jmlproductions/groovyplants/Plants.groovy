@@ -48,20 +48,48 @@ class Plants
     def update(x, y)
     {
         def pointToUpdate = coordinatePair(x, y)
-        def neighborsLeftRightAndAbove = setOfTerrainsAt(pointToUpdate, leftRightAndAbove)
-        def neighborsAdjacent = setOfTerrainsAt(pointToUpdate, adjacent)
+
+        if (terrainAt(pointToUpdate) == Seed)
+        {
+            createSproutIfWaterIsAdjacentAt(pointToUpdate).otherwise{removeSeedByDiceRollAt(pointToUpdate)}
+        }
+    }
+
+    def private createSproutIfWaterIsAdjacentAt(point)
+    {
+        def neighborsLeftRightAndAbove = setOfTerrainsAt(point, leftRightAndAbove)
+        def neighborsAdjacent = setOfTerrainsAt(point, adjacent)
 
         if (anyTerrainAtCoordinatesMatches(neighborsLeftRightAndAbove) { it == GroundWater } ||
             anyTerrainAtCoordinatesMatches(neighborsAdjacent) { it == Water })
         {
-            terrain[x][y - 1] = Plant
-            terrain[x][y] = Plant
-            terrain[x][y + 1] = Root
-            terrain[x][y + 2] = Root
+            createSproutAt(point)
+            [otherwise: {}]
         }
-        else if (random.nextInt(100) == 0)
+        else
         {
-            terrain[x][y] = Dirt
+            [otherwise: {it()} ]
+        }
+    }
+
+    def private terrainAt(point)
+    {
+        terrain[point.x][point.y]
+    }
+
+    def private createSproutAt(point)
+    {
+        terrain[point.x][point.y - 1] = Plant
+        terrain[point.x][point.y] = Plant
+        terrain[point.x][point.y + 1] = Root
+        terrain[point.x][point.y + 2] = Root
+    }
+
+    def private removeSeedByDiceRollAt(point)
+    {
+        if (random.nextInt(100) == 0)
+        {
+            terrain[point.x][point.y] = Dirt
         }
     }
 
